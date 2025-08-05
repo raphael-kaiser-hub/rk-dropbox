@@ -1,3 +1,5 @@
+import os
+print(">>> DEBUG: DROPBOX_ACCESS_TOKEN vorhanden?", bool(os.environ.get('DROPBOX_ACCESS_TOKEN')))
 from flask import Flask, request, jsonify
 import dropbox
 import os
