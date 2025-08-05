@@ -1,16 +1,12 @@
 import os
-print(">>> DEBUG: DROPBOX_ACCESS_TOKEN vorhanden?", bool(os.environ.get('DROPBOX_ACCESS_TOKEN')))
-
 from flask import Flask, request, jsonify
 import dropbox
 
 app = Flask(__name__)
 
-# Token holen
+# Token holen und prüfen
 DROPBOX_ACCESS_TOKEN = os.environ.get('DROPBOX_ACCESS_TOKEN')
 print(">>> DEBUG: DROPBOX_ACCESS_TOKEN gesetzt?", bool(DROPBOX_ACCESS_TOKEN))
-
-# Token prüfen
 if not DROPBOX_ACCESS_TOKEN:
     raise Exception("DROPBOX_ACCESS_TOKEN ist nicht gesetzt!")
 
@@ -23,20 +19,19 @@ def extract_folder_text():
     if not folder_path:
         return jsonify({'error': 'folder_path fehlt'}), 400
 
-    result_text = ""
     try:
+        result_text = ""
         entries = dbx.files_list_folder(folder_path).entries
-    except Exception as list_error:
-        print(">>> Fehler bei files_list_folder:", list_error)
-        raise list_error
 
-    try:
         for entry in entries:
             if isinstance(entry, dropbox.files.FileMetadata) and entry.name.endswith('.pdf'):
                 _, res = dbx.files_download(entry.path_lower)
                 pdf_bytes = res.content
-                # Hier müsste die PDF-Extraktion eingebaut werden, z. B. mit pdfplumber
+                # Hier könnte z. B. mit pdfplumber gearbeitet werden
                 result_text += f"\n--- {entry.name} ---\n[PDF-Inhalt hier extrahieren]"
+
         return jsonify({'text': result_text})
+    
     except Exception as e:
+        print(f">>> Fehler beim Verarbeiten des Ordners '{folder_path}':", repr(e))
         return jsonify({'error': str(e)}), 500
