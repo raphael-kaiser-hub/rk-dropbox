@@ -1,15 +1,18 @@
 import dropbox
 import os
-import fitz  # PyMuPDF
+import pdfplumber
+import io
 
 DROPBOX_TOKEN = os.getenv("DROPBOX_TOKEN")
 
 def get_pdf_text(path):
     dbx = dropbox.Dropbox(DROPBOX_TOKEN)
     _, res = dbx.files_download(path)
-    with open("temp.pdf", "wb") as f:
-        f.write(res.content)
+    pdf_file = io.BytesIO(res.content)
 
-    doc = fitz.open("temp.pdf")
-    text = "\n\n".join(page.get_text() for page in doc)
-    return text
+    text = ""
+    with pdfplumber.open(pdf_file) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text() + "\n\n"
+
+    return text.strip()
