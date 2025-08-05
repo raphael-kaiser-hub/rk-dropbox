@@ -49,25 +49,5 @@ def extract_folder_text():
         print(f">>> Fehler beim Verarbeiten des Ordners '{folder_path}': {repr(e)}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/extract-folder-text', methods=['GET'])
-def extract_folder_text():
-    folder_path = request.args.get('folder_path')
-    if not folder_path:
-        return jsonify({'error': 'folder_path fehlt'}), 400
-
-    try:
-        result_text = ""
-        entries = dbx.files_list_folder(folder_path).entries
-
-        for entry in entries:
-            if isinstance(entry, dropbox.files.FileMetadata) and entry.name.endswith('.pdf'):
-                _, res = dbx.files_download(entry.path_lower)
-                pdf_bytes = res.content
-                # Hier könnte z. B. mit pdfplumber gearbeitet werden
-                result_text += f"\n--- {entry.name} ---\n[PDF-Inhalt hier extrahieren]"
-
-        return jsonify({'text': result_text})
-    
-    except Exception as e:
-        print(f">>> Fehler beim Verarbeiten des Ordners '{folder_path}':", repr(e))
-        return jsonify({'error': str(e)}), 500
+if __name__ == '__main__':
+    app.run(debug=True)
