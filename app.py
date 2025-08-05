@@ -7,6 +7,7 @@ app = Flask(__name__)
 # Dropbox-Token aus Umgebungsvariable (Render -> Environment)
 DROPBOX_ACCESS_TOKEN = os.environ.get('DROPBOX_ACCESS_TOKEN')
 dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
+   print(">>> DEBUG: DROPBOX_ACCESS_TOKEN =", DROPBOX_ACCESS_TOKEN)
 
 @app.route('/extract-folder-text', methods=['GET'])
 def extract_folder_text():
@@ -26,3 +27,4 @@ def extract_folder_text():
         return jsonify({'text': result_text})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+     
