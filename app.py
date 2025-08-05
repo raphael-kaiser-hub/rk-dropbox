@@ -13,6 +13,15 @@ if not DROPBOX_ACCESS_TOKEN:
 # Dropbox-Client initialisieren
 dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
 
+@app.route('/list-root', methods=['GET'])
+def list_root():
+    try:
+        result = dbx.files_list_folder('')
+        entries = [entry.name for entry in result.entries]
+        return jsonify({'entries': entries})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+        
 @app.route('/extract-folder-text', methods=['GET'])
 def extract_folder_text():
     folder_path = request.args.get('folder_path')
