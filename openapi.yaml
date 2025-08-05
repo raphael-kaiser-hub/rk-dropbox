@@ -1,0 +1,27 @@
+openapi: 3.0.0
+info:
+  title: Dropbox PDF Reader
+  version: 1.0.0
+paths:
+  /pdf-text:
+    get:
+      summary: Lese Text aus PDF in Dropbox
+      parameters:
+        - in: query
+          name: path
+          schema:
+            type: string
+          required: true
+          description: Pfad zur PDF-Datei in der Dropbox (z. B. /Gutachten/bericht1.pdf)
+      responses:
+        '200':
+          description: Erfolgreicher Textabruf
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+                  path:
+                    type: string
