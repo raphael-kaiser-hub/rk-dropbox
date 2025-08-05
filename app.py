@@ -26,6 +26,9 @@ def extract_folder_text():
     try:
         result_text = ""
         entries = dbx.files_list_folder(folder_path).entries
+        except Exception as list_error:
+    print(">>> Fehler bei files_list_folder:", list_error)
+    raise list_error
         for entry in entries:
             if isinstance(entry, dropbox.files.FileMetadata) and entry.name.endswith('.pdf'):
                 _, res = dbx.files_download(entry.path_lower)
